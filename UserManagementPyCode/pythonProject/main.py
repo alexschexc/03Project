@@ -19,7 +19,7 @@ if __name__ == "__main__":
             print("Options:")
             print("10: Register a new user")
             print("20: Log in")
-            print("3: Delete a user")
+            print("30: Delete a user")
             print("00: Quit")
 
             option = input("Enter an option: ")
