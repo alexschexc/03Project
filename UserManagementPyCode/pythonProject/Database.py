@@ -100,6 +100,29 @@ class Database:
             self.connection.rollback()
             print(f"Error updating balance: {e}")
 
+    def log_activity(self, user_id, action, details):
+        self.cursor.execute(
+            sql.SQL("INSERT INTO logs (user_id, action, details) VALUES (%s, %s, %s)"),
+            [user_id, action, details]
+        )
+        self.connection.commit()
+
+    def update_failed_attempts(self, user_id, reset=False):
+        if reset:
+            self.cursor.execute("UPDATE users SET failed_attempts = 0 WHERE id = %s", [user_id])
+        else:
+            self.cursor.execute("UPDATE users SET failed_attempts = failed_attempts + 1 WHERE id = %s", [user_id])
+        self.connection.commit()
+
+    def lock_user(self, user_id):
+        self.cursor.execute("UPDATE users SET locked = TRUE WHERE id = %s", [user_id])
+        self.connection.commit()
+
+    def get_user_email(self, user_id):
+        self.cursor.execute("SELECT email FROM users WHERE id = %s", [user_id])
+        result = self.cursor.fetchone()
+        return result[0] if result else None
+
     def close(self):
         self.cursor.close()
         self.connection.close()

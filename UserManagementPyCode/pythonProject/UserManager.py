@@ -1,5 +1,7 @@
 import pyotp
 import bcrypt
+import smtplib
+from email.mime.text import MIMEText
 from cryptography.fernet import Fernet
 from Database import Database
 import base64
@@ -48,7 +50,11 @@ class UserManager:
             # Retrieve the user from the database
             user = self.db.get_user(username)
             if user:
-                user_id, password_hash, mfa_secret_encrypted, _ = user
+                user_id, password_hash, mfa_secret_encrypted, failed_attempts, locked = user
+
+                if locked:
+                    print("This account is locked.")
+                    return False
                 # Verify the password
                 if bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8')):
                     # Generate the encryption key based on the username
@@ -57,13 +63,29 @@ class UserManager:
                     mfa_secret = cipher.decrypt(mfa_secret_encrypted.encode('utf-8')).decode('utf-8')
                     # Verify the OTP
                     totp = pyotp.TOTP(mfa_secret)
+
                     if totp.verify(otp):
                         print("Login successful.")
+                        self.db.update_failed_attempts(user_id, reset=True)
+                        self.db.log_activity(user_id, "login", "User logged in successfully.")
                         return True
                     else:
                         print("Invalid OTP.")
                 else:
                     print("Invalid password.")
+                # Handle Failed attempt
+                self.db.update_failed_attempts(user_id)
+                failed_attempts += 1
+
+                # Lock account after 3 failed attempts
+                if failed_attempts >= 3:
+                    self.db.lock_user(user_id)
+                    print("Account locked due to too many failed attempts.")
+                    user_email = self.db.get_user_email(user_id)
+                    self.send_email_alert(user_email, "Account Locked",
+                                          "Your account has been locked after multiple failed login attempts.")
+                    self.db.log_activity(user_id, "account_locked", "Account locked due to failed login attempts.")
+
             else:
                 print("User not found.")
         except Exception as e:
@@ -148,3 +170,14 @@ class UserManager:
                 print(f"Failed to {transaction_type} ${amount} for {username} (Account: {account_number})")
         except Exception as e:
             print(f"Failed to {transaction_type}: {e}")
+
+    def send_email_alert(self, to_address, subject, message):
+        msg = MIMEText(message)
+        msg['Subject'] = subject
+        msg['From'] = "noreply@bankapp.com"
+        msg['To'] = to_address
+
+        with smtplib.SMTP("smtp.yourmailserver.com", 587) as server:
+            server.starttls()
+            server.login("your_email", "your_password")
+            server.sendmail("noreply@bankapp.com", to_address, msg.as_string())
