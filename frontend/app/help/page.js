@@ -7,7 +7,7 @@ export default function Help() {
   const [activeTab, setActiveTab] = useState('faq');
 
   return (
-    <div className="min-h-screen bg-[#1D1D1F] pt-20 pb-12">
+    <div className="min-h-screen bg-[#191919] pt-20 pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-12">
@@ -22,7 +22,7 @@ export default function Help() {
             className={`px-6 py-2 rounded-full ${
               activeTab === 'faq' 
                 ? 'bg-[#ff66c4] text-white' 
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                : 'bg-[#272727] text-gray-300 hover:bg-gray-700'
             }`}
           >
             FAQs
@@ -32,7 +32,7 @@ export default function Help() {
             className={`px-6 py-2 rounded-full ${
               activeTab === 'contact' 
                 ? 'bg-[#ff66c4] text-white' 
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                : 'bg-[#272727] text-gray-300 hover:bg-gray-700'
             }`}
           >
             Contact Us
@@ -44,7 +44,7 @@ export default function Help() {
           {activeTab === 'faq' && (
             <div className="space-y-4">
               {FAQ_ITEMS.map((item, index) => (
-                <div key={index} className="bg-gray-800 rounded-lg p-6">
+                <div key={index} className="bg-[#272727] rounded-lg p-6">
                   <h3 className="text-white text-lg font-medium mb-2">{item.question}</h3>
                   <p className="text-gray-400">{item.answer}</p>
                 </div>
@@ -55,7 +55,7 @@ export default function Help() {
           {activeTab === 'contact' && (
             <div className="grid md:grid-cols-3 gap-6">
               {CONTACT_METHODS.map((method, index) => (
-                <div key={index} className="bg-gray-800 rounded-lg p-6 text-center">
+                <div key={index} className="bg-[#272727] rounded-lg p-6 text-center">
                   <i className={`fas ${method.icon} text-[#ff66c4] text-3xl mb-4`}></i>
                   <h3 className="text-white font-medium mb-2">{method.title}</h3>
                   <p className="text-[#ff66c4] mb-1">{method.detail}</p>
