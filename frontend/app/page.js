@@ -14,7 +14,7 @@ export default function Home() {
             every transaction. Zero data sharing. Your financial data stays
             private, secure, and completely under your control.
           </p>
-          <Link href="/login" className="inline-block px-8 py-3 bg-black text-white rounded-full 
+          <Link href="/register" className="inline-block px-8 py-3 bg-black text-white rounded-full 
             hover:bg-[#ff66c4] transition-colors duration-200">
             Start Here
           </Link>
