@@ -21,6 +21,7 @@ if __name__ == "__main__":
             print("20: Log in")
             print("30: Delete a user")
             print("40: Unlock a user account")
+            print("50: Open a new bank account")
             print("00: Quit")
 
             option = input("Enter an option: ")
@@ -45,6 +46,7 @@ if __name__ == "__main__":
                         print("90: Quit")
                         print("100: View payment history")
                         print("110: View user activity")
+                        print("120: Open a new bank account")
 
                         option1 = input("Enter an option: ")
 
@@ -81,6 +83,13 @@ if __name__ == "__main__":
                             user_activity = user_manager.view_user_activity(logged_in_username)
                             for record in user_activity:
                                 print(f"Action: {record[0]}, Details: {record[1]}, Timestamp: {record[2]}")
+                        elif option1 == "120":
+                            account_type = input("Enter the account type (checking/savings/business): ")
+                            initial_deposit = float(input("Enter the initial deposit amount: "))
+                            if user_manager.add_bank_account(logged_in_username, account_type, initial_deposit):
+                                print(f"Opened {account_type} account with initial deposit of ${initial_deposit}.")
+                            else:
+                                print("Failed to open account.")
                         else:
                             print("Invalid option. Please try again.")
             elif option == "30":

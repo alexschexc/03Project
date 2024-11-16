@@ -23,6 +23,7 @@ export default function Login() {
       });
       const data = await response.json();
       if (data.success) {
+        localStorage.setItem('loggedInUsername', username); // Save the logged-in username to local storage
         setMessage("Login successful. Redirecting...");
         setTimeout(() => {
           router.push('/account'); // Redirect to account page after successful login
