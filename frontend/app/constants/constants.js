@@ -1,11 +1,11 @@
 export const FAQ_ITEMS = [
     {
-      question: "How secure is Encrypt Bank?",
+      question: " Encrypt Bank?",
       answer: "We use end-to-end encryption for all transactions and implement zero-knowledge protocols to ensure your financial data remains private and secure."
     },
     {
-      question: "How do I reset my password?",
-      answer: "You can reset your password by clicking 'Forgot Password' on the login page. We'll send you a secure reset link to your registered email."
+      question: "What Security Principles does Encrypt Bank address?",
+      answer: "Confidentiality through MFA and bycrypt. \nIntegrity with PostgreSQL database, which controls and validates inputs. \nAuthentication with MFA and OTP through login."
     },
     {
       question: "What are the daily transaction limits?",

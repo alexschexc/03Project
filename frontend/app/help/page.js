@@ -14,8 +14,7 @@ export default function Help() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header Section */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-white mb-4">How can we help?</h1>
-            <p className="text-gray-400">Find answers to common questions or contact our support team</p>
+            <h1 className="text-4xl font-bold text-white mb-4">Encrypt Bank Q&A</h1>
           </div>
 
           {/* Navigation Tabs */}
