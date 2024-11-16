@@ -1,18 +1,20 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Import CORS
 import os
 from Database import Database
 from UserManager import UserManager
 from BankTransactions import BankTransactions
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for the Flask app
 
 # Initialize the database connection
 dbname = os.getenv('DB_NAME', 'default_dbname')
 dbuser = os.getenv('DB_USER', 'default_user')
 dbpassword = os.getenv('DB_PASSWORD', 'default_password')
 database = Database(dbname=dbname, user=dbuser, password=dbpassword)
-bank_transactions = BankTransactions(database)
-user_manager = UserManager(database, bank_transactions)
+user_manager = UserManager(database)
+bank_transactions = BankTransactions(database, user_manager.send_email_alert)
 
 @app.route('/register', methods=['POST'])
 def register_user():

@@ -73,10 +73,12 @@ class UserManager:
                     cipher = self._generate_encryption_key(username)
                     # Decrypt the MFA secret
                     mfa_secret = cipher.decrypt(mfa_secret_encrypted.encode('utf-8')).decode('utf-8')
+                   # print(f"Decrypted MFA Secret: {mfa_secret}")  # Debug logging
                     # Decrypt the email
                     email = cipher.decrypt(email_encrypted.encode('utf-8')).decode('utf-8')
                     # Verify the OTP using pyotp
                     totp = pyotp.TOTP(mfa_secret)
+                    # print(f"Generated OTP: {totp.now()}")  # Debug logging
 
                     if totp.verify(otp):
                         print("Login successful.")

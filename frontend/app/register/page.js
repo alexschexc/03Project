@@ -1,17 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // Ensure correct import
 import Header from "../components/Header";
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
     username: "",
     password: "",
     confirmPassword: "",
     email: ""
   });
+  const [message, setMessage] = useState("");
+  const router = useRouter(); // Ensure useRouter is used within the component
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,12 +35,16 @@ export default function Register() {
       });
       const data = await response.json();
       if (response.ok) {
-        alert(data.message);
+        setMessage(data.message);
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000); // Redirect to login page after 2 seconds
       } else {
-        alert(data.message);
+        setMessage(data.message);
       }
     } catch (error) {
-      alert("An error occurred. Please try again.");
+      console.error("Error during registration:", error); // Log the error
+      setMessage("An error occurred. Please try again.");
     }
   };
 
@@ -58,36 +63,6 @@ export default function Register() {
               </div>
               <div className="px-6 py-4 border-t">
                 <form className="space-y-6" onSubmit={handleSubmit}>
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-500 focus:ring-neutral-500"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-neutral-700">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-500 focus:ring-neutral-500"
-                        required
-                      />
-                    </div>
-                  </div>
                   <div>
                     <label htmlFor="username" className="block text-sm font-medium text-neutral-700">
                       Username
@@ -151,6 +126,7 @@ export default function Register() {
                     Apply Now
                   </button>
                 </form>
+                {message && <p className="mt-4 text-center text-sm text-neutral-700">{message}</p>}
               </div>
             </div>
           </div>
