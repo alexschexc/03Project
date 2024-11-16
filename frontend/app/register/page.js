@@ -4,6 +4,44 @@ import { useState } from "react";
 import Header from "../components/Header";
 
 export default function Register() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    email: ""
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    try {
+      const response = await fetch('http://localhost:5000/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.message);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      alert("An error occurred. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -12,111 +50,108 @@ export default function Register() {
           <div className="space-y-4">
             {/* Register Section */}
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-              <div
-                className="w-full px-6 py-4 flex items-center justify-between"
-              >
+              <div className="w-full px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center">
-                    <i className="fa-solid fa-star text-black-400 mr-4" />
-                  <h2 className="text-xl font-semibold">
-                    Register
-                  </h2>
+                  <i className="fa-solid fa-star text-black-400 mr-4" />
+                  <h2 className="text-xl font-semibold">Register</h2>
                 </div>
               </div>
-
-                <div className="px-6 py-4 border-t">
-                  <form className="space-y-6">
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                      <div>
-                        <label
-                          htmlFor="firstName"
-                          className="block text-sm font-medium text-neutral-700"
-                        >
-                          First Name
-                        </label>
-                        <input
-                          type="text"
-                          id="firstName"
-                          name="firstName"
-                          className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm 
-                          focus:border-neutral-500 focus:ring-neutral-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="lastName"
-                          className="block text-sm font-medium text-neutral-700"
-                        >
-                          Last Name
-                        </label>
-                        <input
-                          type="text"
-                          id="lastName"
-                          name="lastName"
-                          className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm 
-                          focus:border-neutral-500 focus:ring-neutral-500"
-                          required
-                        />
-                      </div>
-                    </div>
+              <div className="px-6 py-4 border-t">
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
-                      <label
-                        htmlFor="newUsername"
-                        className="block text-sm font-medium text-neutral-700"
-                      >
-                        Username
+                      <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700">
+                        First Name
                       </label>
                       <input
                         type="text"
-                        id="newUsername"
-                        name="username"
-                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm 
-                        focus:border-neutral-500 focus:ring-neutral-500"
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-500 focus:ring-neutral-500"
                         required
                       />
                     </div>
                     <div>
-                      <label
-                        htmlFor="newPassword"
-                        className="block text-sm font-medium text-neutral-700"
-                      >
-                        Password
+                      <label htmlFor="lastName" className="block text-sm font-medium text-neutral-700">
+                        Last Name
                       </label>
                       <input
-                        type="password"
-                        id="newPassword"
-                        name="password"
-                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm 
-                        focus:border-neutral-500 focus:ring-neutral-500"
+                        type="text"
+                        id="lastName"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-500 focus:ring-neutral-500"
                         required
                       />
                     </div>
-                    <div>
-                      <label
-                        htmlFor="confirmPassword"
-                        className="block text-sm font-medium text-neutral-700"
-                      >
-                        Confirm Password
-                      </label>
-                      <input
-                        type="password"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm 
-                        focus:border-neutral-500 focus:ring-neutral-500"
-                        required
-                      />
-                    </div>
-                    <button href="/register"
-                      className="w-full flex justify-center py-2 px-4 border border-transparent 
-                      rounded-xl shadow-sm text-sm font-medium text-white bg-neutral-900 
-                      hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 
-                      focus:ring-neutral-500"
-                    >
-                      Apply Now
-                    </button>
-                  </form>
-                </div>
+                  </div>
+                  <div>
+                    <label htmlFor="username" className="block text-sm font-medium text-neutral-700">
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-500 focus:ring-neutral-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-neutral-700">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-500 focus:ring-neutral-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="password" className="block text-sm font-medium text-neutral-700">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-500 focus:ring-neutral-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-neutral-700">
+                      Confirm Password
+                    </label>
+                    <input
+                      type="password"
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-500 focus:ring-neutral-500"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-neutral-900 hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500"
+                  >
+                    Apply Now
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>

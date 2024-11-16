@@ -19,8 +19,12 @@ def register_user():
     data = request.json
     username = data['username']
     password = data['password']
-    user_manager.register_user(username, password)
-    return jsonify({"message": "User registered successfully"}), 201
+    email = data['email']
+    success = user_manager.register_user(username, password, email)
+    if success:
+        return jsonify({"message": "User registered successfully"}), 201
+    else:
+        return jsonify({"message": "Registration failed"}), 400
 
 @app.route('/login', methods=['POST'])
 def login_user():

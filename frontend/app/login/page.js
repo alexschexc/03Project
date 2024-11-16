@@ -6,6 +6,7 @@ import Header from "../components/Header";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
@@ -71,7 +72,22 @@ export default function Login() {
                       required
                     />
                   </div>
-                  <button href="/otp"
+                  <div>
+                    <label htmlFor="otp" className="block text-sm font-medium text-neutral-700">
+                      OTP
+                    </label>
+                    <input
+                      type="text"
+                      id="otp"
+                      name="otp"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-500 focus:ring-neutral-500"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
                     className="w-full flex justify-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-[#1a1a1a] hover:bg-[#ff66c4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ff66c4]"
                   >
                     Sign In
