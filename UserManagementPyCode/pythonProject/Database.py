@@ -3,8 +3,8 @@ from psycopg2 import sql
 
 class Database:
     def __init__(self, dbname, user, password, host='localhost', port='5432'):
+        # Establish a connection to the PostgreSQL database
         try:
-            # Establish a connection to the PostgreSQL database
             self.connection = psycopg2.connect(
                 dbname=dbname,
                 user=user,
@@ -18,8 +18,8 @@ class Database:
             raise
 
     def create_user(self, username, password_hash, mfa_secret_hash, email):
+        # Insert a new user into the users table
         try:
-            # Insert a new user into the users table
             self.cursor.execute(
                 sql.SQL("INSERT INTO users (username, password_hash, mfa_secret_hash, email) VALUES (%s, %s, %s, %s)"),
                 [username, password_hash, mfa_secret_hash, email]
@@ -74,12 +74,12 @@ class Database:
             self.connection.rollback()
             print(f"Error deleting bank accounts: {e}")
 
-    def add_bank_account(self, user_id, account_number):
+    def add_bank_account(self, user_id, account_number, account_type, initial_deposit):
         try:
-            # Add a new bank account for a user
+            # Add a new bank account for a user with account type and initial deposit
             self.cursor.execute(
-                sql.SQL("INSERT INTO bank_accounts (user_id, account_number) VALUES (%s, %s)"),
-                [user_id, account_number]
+                sql.SQL("INSERT INTO bank_accounts (user_id, account_number, account_type, balance) VALUES (%s, %s, %s, %s)"),
+                [user_id, account_number, account_type, initial_deposit]
             )
             self.connection.commit()
             print("Bank account added successfully.")
@@ -143,9 +143,9 @@ class Database:
 
     def log_payment_history(self, user_id, account_number, biller_name, amount):
         try:
-            # Insert payment history into the payment_activity table
+            # Insert payment history into the payment_history table
             self.cursor.execute(
-                sql.SQL("INSERT INTO payment_activity (user_id, account_number, biller_name, amount) VALUES (%s, %s, %s, %s)"),
+                sql.SQL("INSERT INTO payment_history (user_id, account_number, biller_name, amount) VALUES (%s, %s, %s, %s)"),
                 [user_id, account_number, biller_name, amount]
             )
             self.connection.commit()
@@ -157,7 +157,7 @@ class Database:
     def get_payment_history(self, user_id):
         # Retrieve payment history for a user
         self.cursor.execute(
-            sql.SQL("SELECT account_number, biller_name, amount, timestamp FROM payment_activity WHERE user_id = %s ORDER BY timestamp DESC"),
+            sql.SQL("SELECT account_number, biller_name, amount, timestamp FROM payment_history WHERE user_id = %s ORDER BY timestamp DESC"),
             [user_id]
         )
         return self.cursor.fetchall()

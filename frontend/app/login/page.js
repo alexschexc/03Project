@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Header from "../components/Header";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,12 +23,19 @@ export default function Login() {
       });
       const data = await response.json();
       if (data.success) {
-        // Handle successful login (e.g., redirect to account page)
+        localStorage.setItem('loggedInUsername', username); // Save the logged-in username to local storage
+        setMessage("Login successful. Redirecting...");
+        setTimeout(() => {
+          router.push('/account'); // Redirect to account page after successful login
+        }, 2000);
+      } else if (data.message === "User is locked out, please contact admin.") {
+        setMessage("User is locked out. Please contact admin.");
       } else {
-        setError("Login failed. Please check your credentials.");
+        setMessage("Login failed. Please check your credentials.");
       }
     } catch (error) {
-      setError("An error occurred. Please try again.");
+      console.error("Error during login:", error);
+      setMessage("An error occurred. Please try again.");
     }
   };
 
@@ -93,6 +102,7 @@ export default function Login() {
                     Sign In
                   </button>
                 </form>
+                {message && <p className="mt-4 text-center text-sm text-neutral-700">{message}</p>}
               </div>
             </div>
           </div>

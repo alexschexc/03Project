@@ -9,12 +9,14 @@ import qrcode
 from PIL import Image
 from BankTransactions import BankTransactions
 import os
+import uuid
 
 class UserManager:
     def __init__(self, db):
         # Initialize with a database connection
         self.db = db
         self.bank_transactions = BankTransactions(db, self.send_email_alert)
+        self.logged_in_username = None  # Add this line to store the logged-in username
 
     def _generate_encryption_key(self, username):
         # Generate an encryption key based on the sum of ASCII values of the username
@@ -73,13 +75,16 @@ class UserManager:
                     cipher = self._generate_encryption_key(username)
                     # Decrypt the MFA secret
                     mfa_secret = cipher.decrypt(mfa_secret_encrypted.encode('utf-8')).decode('utf-8')
+                   # print(f"Decrypted MFA Secret: {mfa_secret}")  # Debug logging
                     # Decrypt the email
                     email = cipher.decrypt(email_encrypted.encode('utf-8')).decode('utf-8')
                     # Verify the OTP using pyotp
                     totp = pyotp.TOTP(mfa_secret)
+                    print(f"Generated OTP: {totp.now()}")  # Debug logging
 
                     if totp.verify(otp):
                         print("Login successful.")
+                        self.logged_in_username = username  # Save the logged-in username
                         # Reset failed attempts on successful login
                         self.db.update_failed_attempts(user_id, reset=True)
                         self.db.log_user_activity(user_id, "login", "User logged in successfully.")
@@ -138,19 +143,24 @@ class UserManager:
             print(f"Failed to delete user: {e}")
             return False
 
-    def add_bank_account(self, username, account_number):
+    def add_bank_account(self, username, account_type, initial_deposit):
         try:
             # Retrieve the user from the database
             user = self.db.get_user(username)
             if user:
                 user_id, _, _, _, _, _ = user  # Adjusted to match the number of values returned by get_user
-                self.db.add_bank_account(user_id, account_number)
+                # Generate a unique account number within the limit of 20 characters
+                account_number = str(uuid.uuid4())[:20]
+                self.db.add_bank_account(user_id, account_number, account_type, initial_deposit)
                 self.db.log_user_activity(user_id, "add_bank_account", f"Added bank account {account_number}.")
                 self.db.log_admin_activity("add_bank_account", f"Added bank account {account_number} for user {username}.")
+                return True
             else:
                 print("User not found.")
+                return False
         except Exception as e:
             print(f"Failed to add bank account: {e}")
+            return False
 
     def view_bank_accounts(self, username):
         try:
@@ -197,8 +207,8 @@ class UserManager:
                 user = self.db.get_user(username)
                 if user:
                     user_id, _, _, _, _, _ = user  # Adjusted to match the number of values returned by get_user
-                    self.db.log_payment_history(user_id, account_number, biller_name, amount)
                     self.db.log_user_activity(user_id, "pay_bill", f"Paid ${amount} to {biller_name}.")
+                    self.db.log_payment_history(user_id, account_number, biller_name, amount)
                     self.db.log_admin_activity("pay_bill", f"User {username} paid ${amount} to {biller_name} from account {account_number}.")
             else:
                 print(f"Failed to pay ${amount} to {biller_name} from {username}'s account {account_number}")
@@ -214,8 +224,7 @@ class UserManager:
                 user = self.db.get_user(username)
                 if user:
                     user_id, _, _, _, _, _ = user  # Adjusted to match the number of values returned by get_user
-                    # self.db.log_activity(user_id, transaction_type, f"{transaction_type.capitalize()}ed ${amount} (Account: {account_number})")
-                    # self.db.log_payment_history(user_id, account_number, transaction_type, amount)
+                    self.db.log_payment_history(user_id, account_number, transaction_type, amount)
                     self.db.log_user_activity(user_id, transaction_type, f"{transaction_type.capitalize()}ed ${amount} (Account: {account_number}).")
                     self.db.log_admin_activity(transaction_type, f"User {username} {transaction_type}ed ${amount} (Account: {account_number}).")
                 return True

@@ -8,16 +8,36 @@ export default function OpenAccount() {
   const router = useRouter();
   const [accountType, setAccountType] = useState("");
   const [initialDeposit, setInitialDeposit] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your form submission logic here
-    console.log("Account Type:", accountType);
-    console.log("Initial Deposit:", initialDeposit);
-    
-    // You can add API call here to create the account
-    // After successful account creation, redirect back to accounts page
-    // router.push('/account');
+    try {
+      const loggedInUsername = localStorage.getItem('loggedInUsername'); // Retrieve the logged-in username from local storage
+      const response = await fetch('http://localhost:5000/open_account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: loggedInUsername, // Use the retrieved username
+          account_type: accountType,
+          initial_deposit: initialDeposit,
+        }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setMessage("Account opened successfully. Redirecting...");
+        setTimeout(() => {
+          router.push('/account');
+        }, 2000); // Redirect to account page after 2 seconds
+      } else {
+        setMessage(data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("An error occurred. Please try again.");
+    }
   };
 
   return (
@@ -77,6 +97,7 @@ export default function OpenAccount() {
                 </button>
               </div>
             </form>
+            {message && <p className="mt-4 text-center text-sm text-neutral-700">{message}</p>}
           </div>
         </div>
       </div>

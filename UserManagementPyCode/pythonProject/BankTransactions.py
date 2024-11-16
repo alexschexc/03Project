@@ -7,6 +7,9 @@ class BankTransactions:
 
     def process_fund_transfer(self, amount, from_username, from_account, to_username, to_account):
         try:
+            if len(from_account) > 20 or len(to_account) > 20:
+                print("Account number exceeds the length limit of 20 characters.")
+                return False
             from_user = self.db.get_user(from_username)
             to_user = self.db.get_user(to_username)
             if from_user and to_user:
@@ -26,6 +29,7 @@ class BankTransactions:
                     self.db.log_user_activity(to_user_id, "fund_transfer", f"Received ${amount} from {from_username}.")
                     self.db.log_payment_history(from_user_id, from_account, to_username, amount)
                     self.db.log_payment_history(to_user_id, to_account, from_username, amount)
+                    self.db.log_admin_activity("fund_transfer", f"Transferred ${amount} from {from_username} to {to_username}.")
 
                     # Send email notifications
                     from_user_email = self.db.get_user_email(from_user_id)
@@ -49,6 +53,9 @@ class BankTransactions:
 
     def process_bill_payment(self, amount, username, account_number, biller_name):
         try:
+            if len(account_number) > 20:
+                print("Account number exceeds the length limit of 20 characters.")
+                return False
             user = self.db.get_user(username)
             if user:
                 user_id, _, _, _, _, _ = user  # Adjusted to match the number of values returned by get_user
@@ -61,7 +68,6 @@ class BankTransactions:
                     # Log bill payment
                     self.db.log_user_activity(user_id, "bill_payment", f"Paid ${amount} to {biller_name}.")
                     self.db.log_payment_history(user_id, account_number, biller_name, amount)
-
                     self.db.log_admin_activity("bill_payment", f"User {username} paid ${amount} to {biller_name}.")
                     print(f"Bill payment of ${amount} to {biller_name} successful.")
                     return True
@@ -77,6 +83,9 @@ class BankTransactions:
 
     def process_deposit_withdrawal(self, amount, username, account_number, transaction_type):
         try:
+            if len(account_number) > 20:
+                print("Account number exceeds the length limit of 20 characters.")
+                return False
             user = self.db.get_user(username)
             if user:
                 user_id, _, _, _, _, _ = user  # Adjusted to match the number of values returned by get_user
@@ -94,7 +103,6 @@ class BankTransactions:
                 # Log deposit or withdrawal
                 self.db.log_user_activity(user_id, transaction_type, f"{transaction_type.capitalize()}ed ${amount} (Account: {account_number}).")
                 self.db.log_payment_history(user_id, account_number, transaction_type, amount)
-
                 self.db.log_admin_activity(transaction_type, f"User {username} {transaction_type}ed ${amount}.")
                 return True
             else:

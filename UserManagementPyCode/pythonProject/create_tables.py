@@ -26,7 +26,9 @@ def create_tables():
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
             account_number VARCHAR(20) UNIQUE NOT NULL,
-            balance DECIMAL(10, 2) NOT NULL DEFAULT 0.00
+            account_type VARCHAR(50) NOT NULL,
+            balance DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+            initial_deposit DECIMAL(10, 2) NOT NULL DEFAULT 0.00
         );
     ''')
     cursor.execute('''
@@ -43,16 +45,6 @@ def create_tables():
             user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
             action VARCHAR(255) NOT NULL,
             details TEXT,
-            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    ''')
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS payment_activity (
-            id SERIAL PRIMARY KEY,
-            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-            account_number VARCHAR(20) NOT NULL,
-            biller_name VARCHAR(255),
-            amount DECIMAL(10, 2) NOT NULL,
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ''')
