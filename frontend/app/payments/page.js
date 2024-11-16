@@ -24,7 +24,7 @@ export default function PaymentsPage() {
       title: "Withdraw Funds",
       description: "Withdraw money from your accounts",
       icon: "fa-money-bill-transfer",
-      path: "/payments/withdraw_fund",
+      path: "/payments/withdraw",
       color: "from-[#66a3ff] to-[#3385ff]"
     }
   ];
