@@ -1,9 +1,12 @@
 import Header from "../components/Header";
+import Navbar from "../components/Navbar";
+
 
 export default function Account() {
   return (
     <>
-      <div className="min-h-screen bg-pink-100 pt-16">
+      <Navbar /> {/* Include the Navbar here */}
+      <div className="min-h-screen bg-[#090909] pt-16">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white rounded-2xl shadow p-6">
