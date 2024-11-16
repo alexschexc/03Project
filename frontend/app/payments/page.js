@@ -36,7 +36,7 @@ export default function PaymentsPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-semibold text-white">Payments & Transfers</h1>
           <Link 
-            href="/payments/transfer"
+            href="/payments/paymentHistory"
             className="text-sm text-[#ff66c4] hover:text-[#ff3399] transition-colors"
           >
             View Payment History →
