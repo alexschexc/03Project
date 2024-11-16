@@ -17,7 +17,7 @@ export default function SecurityPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-white">Login History</h3>
+                  <h3 className="text-white">Activity Log</h3>
                   <p className="text-gray-400 text-sm">View your recent login activity</p>
                 </div>
                 <button className="px-4 py-2 bg-[#1a1a1a] text-white rounded-lg hover:bg-[#ff66c4] transition-colors">
