@@ -42,7 +42,7 @@ const Navbar = () => {
             href="/login" 
             className="text-[14px] text-white font-normal hover:text-gray-300 transition-colors py-2"
           >
-            Log In
+            Log Out
           </Link>
         </div>
       </div>
