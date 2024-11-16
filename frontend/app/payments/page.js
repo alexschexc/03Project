@@ -31,6 +31,7 @@ export default function PaymentsPage() {
 
   return (
     <div className="min-h-screen bg-[#191919]">
+        <Navbar />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-semibold text-white">Payments & Transfers</h1>
