@@ -139,7 +139,9 @@ class Database:
             sql.SQL("SELECT action, details, timestamp FROM user_activity WHERE user_id = %s ORDER BY timestamp DESC"),
             [user_id]
         )
-        return self.cursor.fetchall()
+        activity = self.cursor.fetchall()
+        print(f"Database User Activity: {activity}")  # Log the activity data
+        return activity
 
     def log_payment_history(self, user_id, account_number, biller_name, amount):
         try:

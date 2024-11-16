@@ -1,57 +1,53 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 
-export default function ActivityLog() {
-  // Mock data - replace with actual API call
-  const activities = [
-    {
-      type: 'login',
-      device: 'MacBook Pro',
-      location: 'San Francisco, CA',
-      ip: '192.168.1.1',
-      timestamp: '2024-03-15 14:30:45',
-      status: 'success'
-    },
-    {
-      type: 'transfer',
-      device: 'iPhone 12',
-      location: 'San Francisco, CA',
-      ip: '192.168.1.2',
-      timestamp: '2024-03-15 12:15:22',
-      status: 'success'
-    },
-    {
-      type: 'password_change',
-      device: 'Chrome Windows',
-      location: 'San Francisco, CA',
-      ip: '192.168.1.3',
-      timestamp: '2024-03-14 09:45:30',
-      status: 'success'
-    },
-    {
-      type: 'login',
-      device: 'Unknown Device',
-      location: 'New York, NY',
-      ip: '192.168.1.4',
-      timestamp: '2024-03-14 08:30:00',
-      status: 'failed'
-    }
-  ];
+const parseActivityData = (data) => {
+  return data.map(item => ({
+    action: item[0],
+    details: item[1],
+    timestamp: item[2]
+  }));
+};
 
-  const getActivityIcon = (type, status) => {
-    switch (type) {
+export default function ActivityLog() {
+  const [activities, setActivities] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/view_user_activity')  // Ensure the correct URL
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Fetched Activity Data:", data);  // Log the fetched data
+        setActivities(Array.isArray(data) ? parseActivityData(data) : []);  // Ensure data is parsed correctly
+      })
+      .catch(error => console.error('Error fetching user activity:', error));
+  }, []);
+
+  const getActivityIcon = (action) => {
+    switch (action) {
       case 'login':
-        return status === 'success' ? 'fa-right-to-bracket text-green-400' : 'fa-xmark text-red-400';
-      case 'transfer':
+        return 'fa-right-to-bracket text-green-400';
+      case 'fund_transfer':
         return 'fa-money-bill-transfer text-[#ff66c4]';
-      case 'password_change':
-        return 'fa-key text-yellow-400';
+      case 'bill_payment':
+        return 'fa-file-invoice-dollar text-yellow-400';
+      case 'add_bank_account':
+        return 'fa-university text-blue-400';
       default:
         return 'fa-circle-info text-blue-400';
     }
+  };
+
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
   };
 
   return (
@@ -108,20 +104,17 @@ export default function ActivityLog() {
                 }`}
               >
                 <div className="w-10 h-10 rounded-full bg-[#1a1a1a] flex items-center justify-center mr-4">
-                  <i className={`fas ${getActivityIcon(activity.type, activity.status)}`}></i>
+                  <i className={`fas ${getActivityIcon(activity.action)}`}></i>
                 </div>
                 <div className="flex-grow">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h3 className="text-white font-semibold">{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}</h3>
-                      <p className="text-sm text-gray-400">{activity.device}</p>
-                      <p className="text-sm text-gray-400">{activity.location}</p>
-                      <p className="text-sm text-gray-400">{activity.ip}</p>
+                      <h3 className="text-white font-semibold">
+                        {activity.action ? activity.action.charAt(0).toUpperCase() + activity.action.slice(1) : 'Unknown Action'}
+                      </h3>
+                      <p className="text-sm text-gray-400">{activity.details}</p>
                     </div>
-                    <div className="text-sm text-gray-400">{activity.timestamp}</div>
-                  </div>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-400">{activity.status === 'success' ? 'Success' : 'Failed'}</p>
+                    <div className="text-sm text-gray-400">{formatTimestamp(activity.timestamp)}</div>
                   </div>
                 </div>
               </div>
