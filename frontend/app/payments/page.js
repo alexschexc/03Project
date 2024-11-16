@@ -10,7 +10,7 @@ export default function PaymentsPage() {
       title: "Transfer Funds",
       description: "Send money to other accounts securely",
       icon: "fa-arrow-right-arrow-left",
-      path: "/security/transfer_payment",
+      path: "/security/transfer",
       color: "from-[#ff66c4] to-[#ff3399]"
     },
     {
@@ -36,7 +36,7 @@ export default function PaymentsPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-semibold text-white">Payments & Transfers</h1>
           <Link 
-            href="/security/transfer_payment"
+            href="/security/transfer"
             className="text-sm text-[#ff66c4] hover:text-[#ff3399] transition-colors"
           >
             View Payment History →
